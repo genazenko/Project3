@@ -16,6 +16,9 @@
     <properties>
         <slf4j.version>1.6.4</slf4j.version>
         <logback.version>1.0.1</logback.version>
+        <servlet.version>3.1.0</servlet.version>
+        <oracle.version>11.2.0</oracle.version>
+        <jackson.version>2.6.3</jackson.version>
     </properties>
     <dependencies>
         <dependency>

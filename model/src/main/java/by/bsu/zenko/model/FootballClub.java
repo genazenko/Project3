@@ -4,16 +4,16 @@ package by.bsu.zenko.model;
  * Created by 123 on 05.10.2016.
  */
 public class FootballClub {
-    private int id_Club;
+    private int clubId;
     private String name;
     private String country;
 
-    public int getId_Club() {
-        return id_Club;
+    public int getClubId() {
+        return clubId;
     }
 
-    public void setId_Club(int id_Club) {
-        this.id_Club = id_Club;
+    public void setClubId(int clubId) {
+        this.clubId = clubId;
     }
 
     public String getName() {
@@ -35,7 +35,7 @@ public class FootballClub {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        str.append("ID_CLUB: "+id_Club+"\n");
+        str.append("ID_CLUB: "+clubId+"\n");
         str.append("NAME: "+name+"\n");
         str.append("COUNTRY: "+country+"\n");
         return str.toString();

@@ -8,8 +8,8 @@ import java.util.List;
  */
 public interface ClubDAO {
     public int insert(FootballClub club);
-    public boolean delete(int id);
-    public boolean update (FootballClub club);
+    public void delete(int id);
+    public void update (FootballClub club);
     public FootballClub get(int id);
     public List<FootballClub> getAll();
 }

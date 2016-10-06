@@ -2,6 +2,7 @@ package by.bsu.zenko.web;
 
 import by.bsu.zenko.dao.DaoFactory;
 import by.bsu.zenko.dao.OracleDaoFactory;
+import by.bsu.zenko.dao.OraclePlayerDAO;
 import by.bsu.zenko.dao.PlayerDAO;
 import by.bsu.zenko.model.Player;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,44 +21,39 @@ import java.util.List;
  */
 public class PlayersServlet extends HttpServlet {
     public static final Logger LOGGER = LoggerFactory.getLogger(PlayersServlet.class);
+    private ObjectMapper mapper = new ObjectMapper();
+    private DaoFactory daoFactory = new OracleDaoFactory();
+    private PlayerDAO playerDAO;
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String json = req.getParameter("Player");
-        ObjectMapper mapper = new ObjectMapper();
         Player pl = mapper.readValue(json, Player.class);
-        DaoFactory daoFactory = new OracleDaoFactory();
         try{
-            PlayerDAO playerDao = daoFactory.getPlayerDAO(daoFactory.getConnection());
-            if(playerDao.insert(pl)==0) {
-                resp.getOutputStream().print("Player sucsessful added");
-            }
-            else
-                resp.getOutputStream().print("Player with id = "+pl.getId_Player()+" already exist");
+            playerDAO = daoFactory.getPlayerDAO(daoFactory.getConnection());
+            resp.getOutputStream().print("Player with playerId = "+playerDAO.insert(pl)+" sucsessful added");
         }
         catch(Exception e){
+            LOGGER.error("ERROR: ",e);
         }
     }
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        DaoFactory daoFactory = new OracleDaoFactory();
         String param = req.getParameter("id");
         try {
             if (param!=null){
                 Integer id = new Integer(param);
-                PlayerDAO playerDAO = daoFactory.getPlayerDAO(daoFactory.getConnection());
+                playerDAO = daoFactory.getPlayerDAO(daoFactory.getConnection());
                 Player pl = playerDAO.get(id);
-                ObjectMapper mapper = new ObjectMapper();
                 resp.getOutputStream().print(mapper.writeValueAsString(pl));
             }
             else {
-                PlayerDAO playerDAO = daoFactory.getPlayerDAO(daoFactory.getConnection());
+                playerDAO = daoFactory.getPlayerDAO(daoFactory.getConnection());
                 List<Player> list = playerDAO.getAll();
-                ObjectMapper mapper = new ObjectMapper();
                 resp.getOutputStream().print(mapper.writeValueAsString(list));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("ERROR: ",e);
         }
     }
 }

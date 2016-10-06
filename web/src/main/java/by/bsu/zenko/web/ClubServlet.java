@@ -20,26 +20,26 @@ import java.util.List;
  */
 public class ClubServlet extends HttpServlet {
     public static final Logger LOGGER = LoggerFactory.getLogger(ClubServlet.class);
+    private ObjectMapper mapper = new ObjectMapper();
+    private DaoFactory daoFactory = new OracleDaoFactory();
+    private ClubDAO clubDAO;
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        DaoFactory daoFactory = new OracleDaoFactory();
         String param = req.getParameter("id");
         try {
+            clubDAO = daoFactory.getClubDAO(daoFactory.getConnection());
             if(param!=null){
                 Integer id = new Integer(param);
-                ClubDAO clubDAO = daoFactory.getClubDAO(daoFactory.getConnection());
                 FootballClub club = clubDAO.get(id);
-                ObjectMapper mapper = new ObjectMapper();
                 resp.getOutputStream().print(mapper.writeValueAsString(club));
             }
             else {
-                ClubDAO clubDAO = daoFactory.getClubDAO(daoFactory.getConnection());
                 List<FootballClub> list = clubDAO.getAll();
                 ObjectMapper mapper = new ObjectMapper();
                 resp.getOutputStream().print(mapper.writeValueAsString(list));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("ERROR: ",e);
         }
     }
 }

@@ -3,8 +3,6 @@ package by.bsu.zenko.dao;
 import by.bsu.zenko.model.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletOutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,66 +12,64 @@ import java.util.List;
  */
 public class OraclePlayerDAO implements PlayerDAO {
     public static final Logger LOGGER = LoggerFactory.getLogger(OraclePlayerDAO.class);
+    private static final String INSERT = "INSERT into PLAYERS values (?, ?, ?)";
+    private static final String UPDATE = "UPDATE PLAYERS SET NAME=?,ID_CLUB=? WHERE ID_PLAYER=?";
+    private static final String GET = "SELECT * from PLAYERS WHERE ID_PLAYER=?";
+    private static final String DELETE = "DELETE from PLAYERS WHERE ID_PLAYER=?";
+    private static final String GETALL = "SELECT * from PLAYERS";
     private final Connection connection;
     public OraclePlayerDAO(Connection connection){
         this.connection = connection;
     }
     public int insert(Player pl){
-        Statement stm = null;
+        PreparedStatement stm = null;
         try{
-            stm = connection.createStatement();
-            String sql = "INSERT into PLAYERS values("+pl.getId_Player()+", '"+pl.getName()+"',"+pl.getId_Club()+")";
-            if (CheckIfExist(pl.getId_Player())){
-                return -1;
-            }
-            else{
-                stm.executeUpdate(sql);
-            }
+            stm = connection.prepareStatement(INSERT);
+            stm.setInt(1,pl.getPlayerId());
+            stm.setString(2,pl.getName());
+            stm.setInt(3,pl.getClubId());
+            stm.executeQuery();
         }
         catch(SQLException e){
             LOGGER.error("SQLException: ",e);
         }
-        return 0;
+        return pl.getPlayerId();
     }
-    public boolean delete(int id){
-        Statement stm = null;
+    public void delete(int id){
+        PreparedStatement stm = null;
         try{
-            if(!CheckIfExist(id)) return false;
-            stm = connection.createStatement();
-            String sql = "DELETE from PLAYERS WHERE ID_PLAYER="+id;
-            stm.executeUpdate(sql);
-            return true;
+            stm = connection.prepareStatement(DELETE);
+            stm.setInt(1,id);
+            stm.executeQuery();
         }
         catch(SQLException e){
             LOGGER.error("SQLException: ",e);
         }
-        return false;
     }
-    public boolean update (Player pl){
-        Statement stm = null;
+    public void update (Player pl){
+        PreparedStatement stm = null;
         try{
-            if(!CheckIfExist(pl.getId_Player())) return false;
-            stm = connection.createStatement();
-            String sql = "UPDATE PLAYERS SET NAME='"+pl.getName()+"', ID_CLUB="+pl.getId_Club()+" WHERE ID_PLAYER="+pl.getId_Player();
-            stm.executeUpdate(sql);
-            return true;
+            stm = connection.prepareStatement(UPDATE);
+            stm.setString(1,pl.getName());
+            stm.setInt(2,pl.getClubId());
+            stm.setInt(3,pl.getPlayerId());
+            stm.executeQuery();
         }
         catch (SQLException e){
             LOGGER.error("SQLException: ",e);
         }
-        return false;
     }
     public Player get(int id) {
-        Statement stm = null;
+        PreparedStatement stm = null;
         try {
-            String sql = "SELECT * from PLAYERS WHERE ID_PLAYER = "+id;
-            stm = connection.createStatement();
-            ResultSet rs = stm.executeQuery(sql);
+            stm = connection.prepareStatement(GET);
+            stm.setInt(1,id);
+            ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 Player tmp = new Player();
-                tmp.setId_Player(id);
+                tmp.setPlayerId(id);
                 tmp.setName(rs.getString("NAME"));
-                tmp.setId_Club(rs.getInt("ID_CLUB"));
+                tmp.setClubId(rs.getInt("ID_CLUB"));
                 return tmp;
             }
         } catch (SQLException e) {
@@ -82,27 +78,21 @@ public class OraclePlayerDAO implements PlayerDAO {
         return null;
     }
     public List<Player> getAll(){
-        Statement stm = null;
+        PreparedStatement stm = null;
         List<Player> list = new ArrayList<Player>();
         try {
-            String sql = "SELECT * from PLAYERS";
-            stm = connection.createStatement();
-            ResultSet rs = stm.executeQuery(sql);
+            stm = connection.prepareStatement(GETALL);
+            ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 Player tmp = new Player();
-                tmp.setId_Player(rs.getInt("ID_PLAYER"));
+                tmp.setPlayerId(rs.getInt("ID_PLAYER"));
                 tmp.setName(rs.getString("NAME"));
-                tmp.setId_Club(rs.getInt("ID_CLUB"));
+                tmp.setClubId(rs.getInt("ID_CLUB"));
                 list.add(tmp);
             }
         } catch (SQLException e) {
             LOGGER.error("SQLException: ",e);
         }
         return list;
-    }
-    boolean CheckIfExist(int id)throws SQLException{
-        Statement stm = connection.createStatement();
-        String sql = "SELECT * FROM PLAYERS WHERE ID_PLAYER="+id;
-        return stm.executeQuery(sql).next();
     }
 }

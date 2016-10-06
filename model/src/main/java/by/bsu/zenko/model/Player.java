@@ -4,16 +4,16 @@ package by.bsu.zenko.model;
  * Created by 123 on 05.10.2016.
  */
 public class Player {
-    private int id_Player;
+    private int playerId;
     private String name;
-    private int id_Club;
+    private int clubId;
 
-    public int getId_Player() {
-        return id_Player;
+    public int getPlayerId() {
+        return playerId;
     }
 
-    public void setId_Player(int id_Player) {
-        this.id_Player = id_Player;
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
     public String getName() {
@@ -24,20 +24,20 @@ public class Player {
         this.name = name;
     }
 
-    public int getId_Club() {
-        return id_Club;
+    public int getClubId() {
+        return clubId;
     }
 
-    public void setId_Club(int id_Club) {
-        this.id_Club = id_Club;
+    public void setClubId(int clubId) {
+        this.clubId = clubId;
     }
 
     @Override
     public String toString() {
         StringBuilder tmp = new StringBuilder();
-        tmp.append("ID: "+id_Player+"\n");
+        tmp.append("ID: "+playerId+"\n");
         tmp.append("NAME: "+name+"\n");
-        tmp.append("ID_CLUB: "+id_Club+"\n");
+        tmp.append("ID_CLUB: "+clubId+"\n");
         return tmp.toString();
     }
 }
