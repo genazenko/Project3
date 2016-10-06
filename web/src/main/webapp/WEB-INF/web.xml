@@ -1,0 +1,18 @@
+<web-app>
+    <servlet>
+        <servlet-name>players</servlet-name>
+        <servlet-class>by.bsu.zenko.web.PlayersServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>clubs</servlet-name>
+        <servlet-class>by.bsu.zenko.web.ClubServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>players</servlet-name>
+        <url-pattern>/players</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>clubs</servlet-name>
+        <url-pattern>/clubs</url-pattern>
+    </servlet-mapping>
+</web-app>
