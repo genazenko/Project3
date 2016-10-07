@@ -16,24 +16,30 @@ public class OraclePlayerDAO implements PlayerDAO {
     private static final String UPDATE = "UPDATE PLAYERS SET NAME=?,ID_CLUB=? WHERE ID_PLAYER=?";
     private static final String GET = "SELECT * from PLAYERS WHERE ID_PLAYER=?";
     private static final String DELETE = "DELETE from PLAYERS WHERE ID_PLAYER=?";
-    private static final String GETALL = "SELECT * from PLAYERS";
+    private static final String GETALL = "SELECT * from PLAYERS ORDER by ID_PLAYER";
     private final Connection connection;
     public OraclePlayerDAO(Connection connection){
         this.connection = connection;
     }
     public int insert(Player pl){
         PreparedStatement stm = null;
+        int id=0;
         try{
             stm = connection.prepareStatement(INSERT);
             stm.setInt(1,pl.getPlayerId());
             stm.setString(2,pl.getName());
             stm.setInt(3,pl.getClubId());
             stm.executeQuery();
+            stm = connection.prepareStatement(GETALL);
+            ResultSet rs = stm.executeQuery();
+            if(rs.next()){
+                id = rs.getInt("ID_PLAYER");
+            }
         }
         catch(SQLException e){
             LOGGER.error("SQLException: ",e);
         }
-        return pl.getPlayerId();
+        return id;
     }
     public void delete(int id){
         PreparedStatement stm = null;
