@@ -25,15 +25,14 @@ public class OraclePlayerDAO implements PlayerDAO {
         PreparedStatement stm = null;
         int id=0;
         try{
-            stm = connection.prepareStatement(INSERT);
+            stm = connection.prepareStatement(INSERT, new String[] {"ID_PLAYER"});
             stm.setInt(1,pl.getPlayerId());
             stm.setString(2,pl.getName());
             stm.setInt(3,pl.getClubId());
-            stm.executeQuery();
-            stm = connection.prepareStatement(GETALL);
-            ResultSet rs = stm.executeQuery();
-            if(rs.next()){
-                id = rs.getInt("ID_PLAYER");
+            stm.executeUpdate();
+            ResultSet rs = stm.getGeneratedKeys();
+            if (rs!=null&& rs.next()){
+                id = rs.getInt(1);
             }
         }
         catch(SQLException e){

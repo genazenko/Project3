@@ -24,17 +24,22 @@ public class OracleClubDAO implements ClubDAO {
     }
     public int insert(FootballClub club){
         PreparedStatement stm = null;
+        int id = -1;
         try{
-            stm = connection.prepareStatement(INSERT);
+            stm = connection.prepareStatement(INSERT, new String[] {"ID_CLUB"});
             stm.setInt(1,club.getClubId());
             stm.setString(2,club.getName());
             stm.setString(3,club.getCountry());
-            stm.executeQuery();
+            stm.executeUpdate();
+            ResultSet rs = stm.getGeneratedKeys();
+            if (rs!=null && rs.next()){
+                id = rs.getInt(1);
+            }
         }
         catch(SQLException e){
             LOGGER.error("SQLException: ",e);
         }
-        return club.getClubId();
+        return id;
     }
     public void delete(int id){
         PreparedStatement stm = null;
